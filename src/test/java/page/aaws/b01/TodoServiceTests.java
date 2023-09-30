@@ -32,4 +32,10 @@ public class TodoServiceTests {
         todoDto.setId(todoService.addNewTodo(todoDto));
         log.info(todoDto);
     }
+
+    @Test
+    void testGetTodo() {
+        TodoDto todoDto = this.todoService.getTodo(350L);
+        log.info(todoDto);
+    }
 }

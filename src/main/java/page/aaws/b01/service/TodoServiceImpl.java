@@ -23,4 +23,9 @@ public class TodoServiceImpl implements TodoService {
     public Long addNewTodo(TodoDto dto) {
         return todoRepository.save(modelMapper.map(dto, TodoEntity.class)).getId();
     }
+
+    @Override
+    public TodoDto getTodo(Long id) {
+        return this.modelMapper.map(todoRepository.findById(id).orElseThrow(), TodoDto.class);
+    }
 }
