@@ -8,4 +8,6 @@ public interface TodoService {
     TodoDto getTodo(Long id);
 
     void updateTodo(TodoDto dto);
+
+    void deleteTodo(Long id);
 }
