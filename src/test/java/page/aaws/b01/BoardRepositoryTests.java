@@ -47,6 +47,14 @@ public class BoardRepositoryTests {
     }
 
     @Test
+    void testSelectByWriter() {
+        String writer = "writer 1";
+
+        Page<Board> page = boardRepository.findByWriter(writer, PageRequest.of(0, 10));
+        log.info(page.getContent());
+    }
+
+    @Test
     void testUpdate() {
         Long id = 100L;
 
