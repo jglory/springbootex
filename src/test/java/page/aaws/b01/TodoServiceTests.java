@@ -38,4 +38,16 @@ public class TodoServiceTests {
         TodoDto todoDto = this.todoService.getTodo(350L);
         log.info(todoDto);
     }
+
+    @Test
+    void testUpdateTodo() {
+        todoService.updateTodo(TodoDto.builder()
+                .id(350L)
+                .subject("subject - updated")
+                .description("description - updated")
+                .periodStartedAt(LocalDateTime.now())
+                .periodEndedAt(LocalDateTime.now())
+                .build()
+        );
+    }
 }

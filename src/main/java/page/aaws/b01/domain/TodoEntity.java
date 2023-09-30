@@ -35,4 +35,21 @@ public class TodoEntity extends BaseEntity {
 
     @Column()
     private Boolean done;
+
+    public void changeSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public void changeDescription(String description) {
+        this.description = description;
+    }
+
+    public void changePeriod(LocalDateTime startedAt, LocalDateTime endedAt) {
+        this.periodStartedAt = startedAt;
+        this.periodEndedAt = endedAt;
+    }
+
+    public void hasDone(Boolean done) {
+        this.done = done;
+    }
 }

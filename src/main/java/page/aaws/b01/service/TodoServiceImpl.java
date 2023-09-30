@@ -28,4 +28,14 @@ public class TodoServiceImpl implements TodoService {
     public TodoDto getTodo(Long id) {
         return this.modelMapper.map(todoRepository.findById(id).orElseThrow(), TodoDto.class);
     }
+
+    @Override
+    public void updateTodo(TodoDto dto) {
+        TodoEntity todoEntity = todoRepository.findById(dto.getId()).orElseThrow();
+        todoEntity.changeSubject(dto.getSubject());
+        todoEntity.changeDescription(dto.getDescription());
+        todoEntity.changePeriod(dto.getPeriodStartedAt(), dto.getPeriodEndedAt());
+        todoEntity.hasDone(true);
+        todoRepository.save(todoEntity);
+    }
 }
