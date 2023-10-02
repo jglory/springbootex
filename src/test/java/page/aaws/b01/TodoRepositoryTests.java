@@ -1,5 +1,7 @@
 package page.aaws.b01;
 
+import java.util.List;
+
 import lombok.extern.log4j.Log4j2;
 
 import org.junit.jupiter.api.Test;
@@ -42,6 +44,17 @@ public class TodoRepositoryTests {
             TodoEntity result = todoRepository.save(todoEntity);
             log.info("id: " + result.getId());
         });
+    }
+
+    @Test
+    void testGetTodos() {
+        PageRequestDto pageRequestDto = PageRequestDto.builder()
+                .types(new String[]{"subject", "description"})
+                .keyword("description")
+                .done(true)
+                .build();
+        List<TodoEntity> list = todoRepository.getTodos(pageRequestDto);
+        log.info(list);
     }
 
     @Test
