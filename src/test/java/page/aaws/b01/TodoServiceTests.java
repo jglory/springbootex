@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import page.aaws.b01.dto.PageDto;
+import page.aaws.b01.dto.PageRequestDto;
 import page.aaws.b01.dto.TodoDto;
 import page.aaws.b01.service.TodoService;
 
@@ -37,6 +39,12 @@ public class TodoServiceTests {
     void testGetTodo() {
         TodoDto todoDto = this.todoService.getTodo(350L);
         log.info(todoDto);
+    }
+
+    @Test
+    void testGetTodosByPage() {
+        PageDto<TodoDto> pageDto = this.todoService.getTodosByPage(PageRequestDto.builder().number(1).size(10).build());
+        log.info(pageDto);
     }
 
     @Test
