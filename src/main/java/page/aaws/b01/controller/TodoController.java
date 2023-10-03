@@ -1,6 +1,5 @@
 package page.aaws.b01.controller;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -39,7 +38,7 @@ public class TodoController {
             + bindingResult.getFieldErrors().get(0).getField()
                     + " - " + bindingResult.getFieldErrors().get(0).getCode());
 
-            return new ResponseEntity<Map<String, String>>(response, HttpStatusCode.valueOf(404));
+            return new ResponseEntity<Map<String, String>>(response, HttpStatusCode.valueOf(422));
         }
 
         todoDto.setId(todoService.addNewTodo(todoDto));
@@ -76,5 +75,24 @@ public class TodoController {
         }
 
         return (ResponseEntity<?>) ResponseEntity.ok();
+    }
+
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<?> updateTodo(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody TodoDto todoDto) {
+
+        todoDto.setId(id);
+        try {
+            this.todoService.updateTodo(todoDto);
+        } catch (NoSuchElementException e) {
+            Map<String, String> response = new HashMap<String, String>();
+            response.put("result", "fail");
+            response.put("message", "해당하는 일정 정보를 찾을 수 없습니다.");
+
+            return new ResponseEntity<Map<String, String>>(response, HttpStatusCode.valueOf(404));
+        }
+
+        return ResponseEntity.ok(todoDto);
     }
 }
