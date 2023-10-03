@@ -16,6 +16,8 @@ import page.aaws.b01.dto.PageRequestDto;
 import page.aaws.b01.dto.TodoDto;
 import page.aaws.b01.repository.TodoRepository;
 
+import java.util.NoSuchElementException;
+
 @Service
 @Log4j2
 @RequiredArgsConstructor
@@ -57,7 +59,8 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public void deleteTodo(Long id) {
+    public void deleteTodo(Long id) throws NoSuchElementException {
+        this.todoRepository.findById(id).orElseThrow();
         todoRepository.deleteById(id);
     }
 }
