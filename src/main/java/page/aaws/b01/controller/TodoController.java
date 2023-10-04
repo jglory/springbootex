@@ -45,6 +45,21 @@ public class TodoController {
         return ResponseEntity.ok(todoDto);
     }
 
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<?> deleteTodo(@PathVariable("id") Long id) {
+        try {
+            this.todoService.deleteTodo(id);
+        } catch (NoSuchElementException e) {
+            Map<String, String> response = new HashMap<String, String>();
+            response.put("result", "fail");
+            response.put("message", "해당하는 일정 정보를 찾을 수 없습니다.");
+
+            return new ResponseEntity<Map<String, String>>(response, HttpStatusCode.valueOf(404));
+        }
+
+        return (ResponseEntity<?>) ResponseEntity.ok();
+    }
+
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> getTodo(@PathVariable("id") Long id) {
         TodoDto todoDto;
@@ -60,21 +75,6 @@ public class TodoController {
         }
 
         return (ResponseEntity<?>) ResponseEntity.ok(todoDto);
-    }
-
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> deleteTodo(@PathVariable("id") Long id) {
-        try {
-            this.todoService.deleteTodo(id);
-        } catch (NoSuchElementException e) {
-            Map<String, String> response = new HashMap<String, String>();
-            response.put("result", "fail");
-            response.put("message", "해당하는 일정 정보를 찾을 수 없습니다.");
-
-            return new ResponseEntity<Map<String, String>>(response, HttpStatusCode.valueOf(404));
-        }
-
-        return (ResponseEntity<?>) ResponseEntity.ok();
     }
 
     @PutMapping(value = "/{id}")
