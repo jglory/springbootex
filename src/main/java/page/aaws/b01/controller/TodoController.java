@@ -42,7 +42,7 @@ public class TodoController {
         if (bindingResult.hasErrors()) {
             return (
                 new AddNewTodoFailTransformerImpl(
-                    HttpStatusCode.valueOf(422),
+                    HttpStatusCode.valueOf(HttpStatus.UNPROCESSABLE_ENTITY.value()),
                     new Exception(bindingResult.getFieldErrors().get(0).getField() + " - " + bindingResult.getFieldErrors().get(0).getCode())
                 )
             ).process();
@@ -70,7 +70,7 @@ public class TodoController {
         try {
             todoDto = this.todoService.getTodo(id);
         } catch (NoSuchElementException e) {
-            return (new GetTodoFailTransformerImpl(HttpStatusCode.valueOf(404), e)).process();
+            return (new GetTodoFailTransformerImpl(HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()), e)).process();
         }
 
         return (new GetTodoOkTransformerImpl(todoDto)).process();
@@ -96,7 +96,7 @@ public class TodoController {
             response.put("result", "fail");
             response.put("message", "해당하는 일정 정보를 찾을 수 없습니다.");
 
-            return new ResponseEntity<Map<String, String>>(response, HttpStatusCode.valueOf(404));
+            return new ResponseEntity<Map<String, String>>(response, HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()));
         }
 
         return ResponseEntity.ok(todoDto);
