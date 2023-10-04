@@ -1,7 +1,5 @@
 package page.aaws.b01.controller;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 import jakarta.validation.Valid;
@@ -27,6 +25,8 @@ import page.aaws.b01.controller.transformer.DeleteTodoOkTransformerImpl;
 import page.aaws.b01.controller.transformer.GetTodoFailTransformerImpl;
 import page.aaws.b01.controller.transformer.GetTodoOkTransformerImpl;
 import page.aaws.b01.controller.transformer.GetTodosByPageOkTransformerImpl;
+import page.aaws.b01.controller.transformer.UpdateTodoFailTransformerImpl;
+import page.aaws.b01.controller.transformer.UpdateTodoOkTransformerImpl;
 
 @RestController
 @RequiredArgsConstructor
@@ -82,24 +82,17 @@ public class TodoController {
         return (new GetTodosByPageOkTransformerImpl(this.todoService.getTodosByPage(pageRequestDto))).process();
     }
 
-    @GetMapping(value = "")
-
     @PutMapping(value = "/{id}")
     public ResponseEntity<?> updateTodo(
             @PathVariable("id") Long id,
             @Valid @RequestBody TodoDto todoDto) {
-
         todoDto.setId(id);
         try {
             this.todoService.updateTodo(todoDto);
         } catch (NoSuchElementException e) {
-            Map<String, String> response = new HashMap<String, String>();
-            response.put("result", "fail");
-            response.put("message", "해당하는 일정 정보를 찾을 수 없습니다.");
-
-            return new ResponseEntity<Map<String, String>>(response, HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()));
+            return (new UpdateTodoFailTransformerImpl(HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()), e)).process();
         }
 
-        return ResponseEntity.ok(todoDto);
+        return (new UpdateTodoOkTransformerImpl(todoDto)).process();
     }
 }
