@@ -13,10 +13,10 @@ public class GetTodoFailTransformerImpl extends FailTransformerImpl {
 
     @Override
     public ResponseEntity<?> process() {
-        Map<String, String> response = new HashMap<String, String>();
+        Map<String, String> response = new HashMap<>();
         response.put("result", "fail");
         response.put("message", "해당하는 일정 정보를 찾을 수 없습니다.");
 
-        return new ResponseEntity<Map<String, String>>(response, this.getHttpStatusCode());
+        return new ResponseEntity<>(response, this.getHttpStatusCode());
     }
 }
