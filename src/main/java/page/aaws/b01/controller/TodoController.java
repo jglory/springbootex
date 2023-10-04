@@ -21,6 +21,8 @@ import page.aaws.b01.dto.PageRequestDto;
 import page.aaws.b01.dto.TodoDto;
 import page.aaws.b01.service.TodoService;
 
+import page.aaws.b01.controller.transformer.AddNewTodoFailTransformerImpl;
+import page.aaws.b01.controller.transformer.AddNewTodoOkTransformerImpl;
 import page.aaws.b01.controller.transformer.GetTodoFailTransformerImpl;
 import page.aaws.b01.controller.transformer.GetTodoOkTransformerImpl;
 
@@ -31,25 +33,22 @@ import page.aaws.b01.controller.transformer.GetTodoOkTransformerImpl;
 public class TodoController {
     private final TodoService todoService;
 
-    private final ApplicationContext applicationContext;
-
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewTodo(
             @Valid @RequestBody TodoDto todoDto,
             BindingResult bindingResult
-    ) throws BindException {
+    ) {
         if (bindingResult.hasErrors()) {
-            Map<String, String> response = new HashMap<String, String>();
-            response.put("result", "fail");
-            response.put("message", "입력 정보가 잘못 되었습니다. "
-            + bindingResult.getFieldErrors().get(0).getField()
-                    + " - " + bindingResult.getFieldErrors().get(0).getCode());
-
-            return new ResponseEntity<Map<String, String>>(response, HttpStatusCode.valueOf(422));
+            return (
+                new AddNewTodoFailTransformerImpl(
+                    HttpStatusCode.valueOf(422),
+                    new Exception(bindingResult.getFieldErrors().get(0).getField() + " - " + bindingResult.getFieldErrors().get(0).getCode())
+                )
+            ).process();
         }
 
         todoDto.setId(todoService.addNewTodo(todoDto));
-        return ResponseEntity.ok(todoDto);
+        return (new AddNewTodoOkTransformerImpl(todoDto)).process();
     }
 
     @DeleteMapping(value = "/{id}")
