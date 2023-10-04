@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +21,17 @@ import page.aaws.b01.dto.PageRequestDto;
 import page.aaws.b01.dto.TodoDto;
 import page.aaws.b01.service.TodoService;
 
+import page.aaws.b01.controller.transformer.GetTodoFailTransformerImpl;
+import page.aaws.b01.controller.transformer.GetTodoOkTransformerImpl;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/todo")
 @Log4j2
 public class TodoController {
     private final TodoService todoService;
+
+    private final ApplicationContext applicationContext;
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewTodo(
@@ -68,14 +74,10 @@ public class TodoController {
         try {
             todoDto = this.todoService.getTodo(id);
         } catch (NoSuchElementException e) {
-            Map<String, String> response = new HashMap<String, String>();
-            response.put("result", "fail");
-            response.put("message", "해당하는 일정 정보를 찾을 수 없습니다.");
-
-            return new ResponseEntity<Map<String, String>>(response, HttpStatusCode.valueOf(404));
+            return (new GetTodoFailTransformerImpl(HttpStatusCode.valueOf(404), e)).process();
         }
 
-        return (ResponseEntity<?>) ResponseEntity.ok(todoDto);
+        return (new GetTodoOkTransformerImpl(todoDto)).process();
     }
 
     @GetMapping(value = "/")
