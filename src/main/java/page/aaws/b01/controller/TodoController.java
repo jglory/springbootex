@@ -16,6 +16,7 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import page.aaws.b01.dto.PageRequestDto;
 import page.aaws.b01.dto.TodoDto;
 import page.aaws.b01.service.TodoService;
 
@@ -76,6 +77,13 @@ public class TodoController {
 
         return (ResponseEntity<?>) ResponseEntity.ok(todoDto);
     }
+
+    @GetMapping(value = "/")
+    public ResponseEntity<?> getTodosByPage(@Valid PageRequestDto pageRequestDto) {
+        return (ResponseEntity<?>) ResponseEntity.ok(this.todoService.getTodosByPage(pageRequestDto));
+    }
+
+    @GetMapping(value = "")
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<?> updateTodo(
