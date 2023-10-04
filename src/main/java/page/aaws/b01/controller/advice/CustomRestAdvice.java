@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,7 +29,18 @@ public class CustomRestAdvice {
                 errorMap.put(fieldError.getField(), fieldError.getCode());
             });
         }
-
         return ResponseEntity.badRequest().body(errorMap);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ResponseEntity<Map<String, String>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        log.error(e);
+
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("result", "fail");
+        errorMap.put("message", "잘못된 형식의 입력값입니다. " + e.getMessage());
+
+        return new ResponseEntity<Map<String, String>>(errorMap, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }
