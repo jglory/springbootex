@@ -3,6 +3,9 @@ package page.aaws.b01.repository.querydsl;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQuery;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -41,14 +44,28 @@ public class TodoGetTodosByPageImpl
         }
 
         if (pageRequestDto.getPeriodStartedAt() != null) {
-            query.where(todo.periodStartedAt.gt(pageRequestDto.getPeriodStartedAt()));
+            query.where(todo.periodStartedAt.goe(pageRequestDto.getPeriodStartedAt()));
         }
         if (pageRequestDto.getPeriodEndedAt() != null) {
-            query.where(todo.periodEndedAt.lt(pageRequestDto.getPeriodEndedAt()));
+            query.where(todo.periodEndedAt.loe(pageRequestDto.getPeriodEndedAt()));
         }
 
-        this.getQuerydsl().applyPagination(pageable, query);
+        long totalElements = query.fetchCount();
+        long totalPages = Long.valueOf(totalElements / pageRequestDto.getSize() + (totalElements % pageRequestDto.getSize() > 0 ? 1 : 0)).intValue();
+        List<TodoEntity> items;
+        if (pageRequestDto.getNumber() < 0 || pageRequestDto.getNumber() >= totalPages) {
+            items = new ArrayList<TodoEntity>();
+        } else if (totalElements <= pageRequestDto.getSize()) {
+            if (pageRequestDto.getNumber() == 0) {
+                items = query.fetch();
+            } else {
+                items = new ArrayList<TodoEntity>();
+            }
+        } else {
+            this.getQuerydsl().applyPagination(pageable, query);
+            items = query.fetch();
+        }
 
-        return new PageImpl<TodoEntity>(query.fetch(), pageable, query.fetchCount());
+        return new PageImpl<TodoEntity>(items, pageable, totalElements);
     }
 }
