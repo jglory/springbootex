@@ -26,6 +26,7 @@ import page.aaws.b01.controller.transformer.DeleteTodoFailTransformerImpl;
 import page.aaws.b01.controller.transformer.DeleteTodoOkTransformerImpl;
 import page.aaws.b01.controller.transformer.GetTodoFailTransformerImpl;
 import page.aaws.b01.controller.transformer.GetTodoOkTransformerImpl;
+import page.aaws.b01.controller.transformer.GetTodosByPageOkTransformerImpl;
 
 @RestController
 @RequiredArgsConstructor
@@ -78,7 +79,7 @@ public class TodoController {
 
     @GetMapping(value = "/")
     public ResponseEntity<?> getTodosByPage(@Valid PageRequestDto pageRequestDto) {
-        return (ResponseEntity<?>) ResponseEntity.ok(this.todoService.getTodosByPage(pageRequestDto));
+        return (new GetTodosByPageOkTransformerImpl(this.todoService.getTodosByPage(pageRequestDto))).process();
     }
 
     @GetMapping(value = "")
