@@ -70,10 +70,14 @@ public class TodoController {
         try {
             todoDto = this.todoService.getTodo(id);
         } catch (NoSuchElementException exception) {
-            return (new GetTodoFailTransformerImpl()).process(exception, HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()));
+            return this.applicationContext
+                    .getBean("getTodoFailTransformer", GetTodoFailTransformer.class)
+                    .process(exception, HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()));
         }
 
-        return (new GetTodoOkTransformerImpl()).process(todoDto);
+        return this.applicationContext
+                .getBean("getTodoOkTransformer", GetTodoOkTransformer.class)
+                .process(todoDto);
     }
 
     @GetMapping(value = "/")

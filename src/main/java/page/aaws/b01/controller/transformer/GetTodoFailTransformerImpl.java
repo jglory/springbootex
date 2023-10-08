@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GetTodoFailTransformerImpl extends FailTransformer {
+public class GetTodoFailTransformerImpl extends GetTodoFailTransformer {
     @Override
     public ResponseEntity<?> process(Object... data) {
         HttpStatusCode httpStatusCode = (HttpStatusCode) data[1];
