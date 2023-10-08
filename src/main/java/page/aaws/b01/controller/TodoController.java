@@ -53,10 +53,14 @@ public class TodoController {
         try {
             this.todoService.deleteTodo(id);
         } catch (NoSuchElementException exception) {
-            return (new DeleteTodoFailTransformerImpl().process(exception, HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value())));
+            return this.applicationContext
+                    .getBean("deleteTodoFailTransformer", DeleteTodoFailTransformer.class)
+                    .process(exception, HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()));
         }
 
-        return (new DeleteTodoOkTransformerImpl()).process();
+        return this.applicationContext
+                .getBean("deleteTodoOkTransformer", DeleteTodoOkTransformer.class)
+                .process();
     }
 
     @GetMapping(value = "/{id}")

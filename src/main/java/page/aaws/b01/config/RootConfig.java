@@ -12,6 +12,10 @@ import page.aaws.b01.controller.transformer.AddNewTodoFailTransformer;
 import page.aaws.b01.controller.transformer.AddNewTodoFailTransformerImpl;
 import page.aaws.b01.controller.transformer.AddNewTodoOkTransformer;
 import page.aaws.b01.controller.transformer.AddNewTodoOkTransformerImpl;
+import page.aaws.b01.controller.transformer.DeleteTodoFailTransformer;
+import page.aaws.b01.controller.transformer.DeleteTodoFailTransformerImpl;
+import page.aaws.b01.controller.transformer.DeleteTodoOkTransformer;
+import page.aaws.b01.controller.transformer.DeleteTodoOkTransformerImpl;
 import page.aaws.b01.controller.transformer.GetTodosByPageFailTransformer;
 import page.aaws.b01.controller.transformer.GetTodosByPageFailTransformerImpl;
 import page.aaws.b01.controller.transformer.GetTodosByPageOkTransformer;
@@ -39,6 +43,18 @@ public class RootConfig {
     @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
     public AddNewTodoFailTransformer addNewTodoFailTransformer() {
         return new AddNewTodoFailTransformerImpl();
+    }
+
+    @Bean
+    @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
+    public DeleteTodoOkTransformer deleteTodoOkTransformer() {
+        return new DeleteTodoOkTransformerImpl();
+    }
+
+    @Bean
+    @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
+    public DeleteTodoFailTransformer deleteTodoFailTransformer() {
+        return new DeleteTodoFailTransformerImpl();
     }
 
     @Bean
