@@ -18,15 +18,15 @@ import page.aaws.b01.dto.PageRequestDto;
 import page.aaws.b01.dto.TodoDto;
 import page.aaws.b01.service.TodoService;
 
-import page.aaws.b01.controller.transformer.AddNewTodoFailTransformer;
-import page.aaws.b01.controller.transformer.AddNewTodoOkTransformer;
-import page.aaws.b01.controller.transformer.DeleteTodoFailTransformer;
-import page.aaws.b01.controller.transformer.DeleteTodoOkTransformer;
-import page.aaws.b01.controller.transformer.GetTodoFailTransformer;
-import page.aaws.b01.controller.transformer.GetTodoOkTransformer;
-import page.aaws.b01.controller.transformer.GetTodosByPageOkTransformer;
-import page.aaws.b01.controller.transformer.UpdateTodoFailTransformer;
-import page.aaws.b01.controller.transformer.UpdateTodoOkTransformer;
+import page.aaws.b01.controller.transformer.AddNewTodoFailTransformerImpl;
+import page.aaws.b01.controller.transformer.AddNewTodoOkTransformerImpl;
+import page.aaws.b01.controller.transformer.DeleteTodoFailTransformerImpl;
+import page.aaws.b01.controller.transformer.DeleteTodoOkTransformerImpl;
+import page.aaws.b01.controller.transformer.GetTodoFailTransformerImpl;
+import page.aaws.b01.controller.transformer.GetTodoOkTransformerImpl;
+import page.aaws.b01.controller.transformer.GetTodosByPageOkTransformerImpl;
+import page.aaws.b01.controller.transformer.UpdateTodoFailTransformerImpl;
+import page.aaws.b01.controller.transformer.UpdateTodoOkTransformerImpl;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,7 +42,7 @@ public class TodoController {
     ) {
         if (bindingResult.hasErrors()) {
             return (
-                new AddNewTodoFailTransformer(
+                new AddNewTodoFailTransformerImpl(
                     HttpStatusCode.valueOf(HttpStatus.UNPROCESSABLE_ENTITY.value()),
                     new Exception(bindingResult.getFieldErrors().get(0).getField() + " - " + bindingResult.getFieldErrors().get(0).getCode())
                 )
@@ -50,7 +50,7 @@ public class TodoController {
         }
 
         todoDto.setId(todoService.addNewTodo(todoDto));
-        return (new AddNewTodoOkTransformer(todoDto)).process();
+        return (new AddNewTodoOkTransformerImpl(todoDto)).process();
     }
 
     @DeleteMapping(value = "/{id}")
@@ -58,10 +58,10 @@ public class TodoController {
         try {
             this.todoService.deleteTodo(id);
         } catch (NoSuchElementException e) {
-            return (new DeleteTodoFailTransformer(HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()), e).process());
+            return (new DeleteTodoFailTransformerImpl(HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()), e).process());
         }
 
-        return (new DeleteTodoOkTransformer()).process();
+        return (new DeleteTodoOkTransformerImpl()).process();
     }
 
     @GetMapping(value = "/{id}")
@@ -71,15 +71,15 @@ public class TodoController {
         try {
             todoDto = this.todoService.getTodo(id);
         } catch (NoSuchElementException e) {
-            return (new GetTodoFailTransformer(HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()), e)).process();
+            return (new GetTodoFailTransformerImpl(HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()), e)).process();
         }
 
-        return (new GetTodoOkTransformer(todoDto)).process();
+        return (new GetTodoOkTransformerImpl(todoDto)).process();
     }
 
     @GetMapping(value = "/")
     public ResponseEntity<?> getTodosByPage(@Valid PageRequestDto pageRequestDto) {
-        return (new GetTodosByPageOkTransformer(this.todoService.getTodosByPage(pageRequestDto))).process();
+        return (new GetTodosByPageOkTransformerImpl(this.todoService.getTodosByPage(pageRequestDto))).process();
     }
 
     @PutMapping(value = "/{id}")
@@ -90,9 +90,9 @@ public class TodoController {
         try {
             this.todoService.updateTodo(todoDto);
         } catch (NoSuchElementException e) {
-            return (new UpdateTodoFailTransformer(HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()), e)).process();
+            return (new UpdateTodoFailTransformerImpl(HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()), e)).process();
         }
 
-        return (new UpdateTodoOkTransformer(todoDto)).process();
+        return (new UpdateTodoOkTransformerImpl(todoDto)).process();
     }
 }

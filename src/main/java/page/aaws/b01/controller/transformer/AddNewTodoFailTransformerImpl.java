@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GetTodosByPageFailTransformer extends FailTransformer {
-    public GetTodosByPageFailTransformer(HttpStatusCode httpStatusCode, Exception exception) {
+public class AddNewTodoFailTransformerImpl extends FailTransformer {
+    public AddNewTodoFailTransformerImpl(HttpStatusCode httpStatusCode, Exception exception) {
         super(httpStatusCode, exception);
     }
 
@@ -15,7 +15,7 @@ public class GetTodosByPageFailTransformer extends FailTransformer {
     public ResponseEntity<?> process() {
         Map<String, String> response = new HashMap<>();
         response.put("result", "fail");
-        response.put("message", this.getException().getMessage());
+        response.put("message", "입력 정보가 잘못 되었습니다. " + this.getException().getMessage());
 
         return new ResponseEntity<>(response, this.getHttpStatusCode());
     }
