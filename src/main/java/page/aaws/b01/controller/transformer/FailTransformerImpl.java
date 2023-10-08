@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import org.springframework.http.HttpStatusCode;
-import page.aaws.b01.transformer.Transformer;
 
 @AllArgsConstructor
 @Getter
