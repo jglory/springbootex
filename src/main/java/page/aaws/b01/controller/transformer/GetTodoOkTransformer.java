@@ -4,10 +4,10 @@ import org.springframework.http.ResponseEntity;
 
 import page.aaws.b01.dto.TodoDto;
 
-public class GetTodoOkTransformerImpl extends OkTransformerImpl {
+public class GetTodoOkTransformer extends OkTransformer {
     private final TodoDto todoDto;
 
-    public GetTodoOkTransformerImpl(TodoDto todoDto) {
+    public GetTodoOkTransformer(TodoDto todoDto) {
         this.todoDto = todoDto;
     }
 

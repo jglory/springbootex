@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UpdateTodoFailTransformerImpl extends FailTransformerImpl {
-    public UpdateTodoFailTransformerImpl(HttpStatusCode httpStatusCode, Exception exception) {
+public class UpdateTodoFailTransformer extends FailTransformer {
+    public UpdateTodoFailTransformer(HttpStatusCode httpStatusCode, Exception exception) {
         super(httpStatusCode, exception);
     }
 
