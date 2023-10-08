@@ -34,7 +34,8 @@ public class TodoController {
             BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
-            return (new AddNewTodoFailTransformerImpl())
+            return this.applicationContext
+                    .getBean("addNewTodoFailTransformer", AddNewTodoFailTransformer.class)
                     .process(
                             HttpStatusCode.valueOf(HttpStatus.UNPROCESSABLE_ENTITY.value()),
                             new Exception(bindingResult.getFieldErrors().get(0).getField() + " - " + bindingResult.getFieldErrors().get(0).getCode())
@@ -42,7 +43,9 @@ public class TodoController {
         }
 
         todoDto.setId(todoService.addNewTodo(todoDto));
-        return (new AddNewTodoOkTransformerImpl()).process(todoDto);
+        return this.applicationContext
+                .getBean("addNewTodoOkTransformer", AddNewTodoOkTransformer.class)
+                .process(todoDto);
     }
 
     @DeleteMapping(value = "/{id}")

@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddNewTodoFailTransformerImpl extends FailTransformer {
+public class AddNewTodoFailTransformerImpl extends AddNewTodoFailTransformer {
     @Override
     public ResponseEntity<?> process(Object... data) {
         Exception exception = (Exception) data[0];
