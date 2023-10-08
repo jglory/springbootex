@@ -7,16 +7,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AddNewTodoFailTransformerImpl extends FailTransformer {
-    public AddNewTodoFailTransformerImpl(HttpStatusCode httpStatusCode, Exception exception) {
-        super(httpStatusCode, exception);
-    }
-
     @Override
-    public ResponseEntity<?> process() {
+    public ResponseEntity<?> process(Object... data) {
+        Exception exception = (Exception) data[0];
+        HttpStatusCode httpStatusCode = (HttpStatusCode) data[1];
+
         Map<String, String> response = new HashMap<>();
         response.put("result", "fail");
-        response.put("message", "입력 정보가 잘못 되었습니다. " + this.getException().getMessage());
+        response.put("message", "입력 정보가 잘못 되었습니다. " + exception.getMessage());
 
-        return new ResponseEntity<>(response, this.getHttpStatusCode());
+        return new ResponseEntity<>(response, httpStatusCode);
     }
 }

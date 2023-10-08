@@ -7,16 +7,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GetTodoFailTransformerImpl extends FailTransformer {
-    public GetTodoFailTransformerImpl(HttpStatusCode httpStatusCode, Exception exception) {
-        super(httpStatusCode, exception);
-    }
-
     @Override
-    public ResponseEntity<?> process() {
+    public ResponseEntity<?> process(Object... data) {
+        HttpStatusCode httpStatusCode = (HttpStatusCode) data[1];
+
         Map<String, String> response = new HashMap<>();
         response.put("result", "fail");
         response.put("message", "해당하는 일정 정보를 찾을 수 없습니다.");
 
-        return new ResponseEntity<>(response, this.getHttpStatusCode());
+        return new ResponseEntity<>(response, httpStatusCode);
     }
 }

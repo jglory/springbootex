@@ -6,17 +6,16 @@ import org.springframework.http.ResponseEntity;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GetTodosByPageFailTransformerImpl extends FailTransformer {
-    public GetTodosByPageFailTransformerImpl(HttpStatusCode httpStatusCode, Exception exception) {
-        super(httpStatusCode, exception);
-    }
-
+public class GetTodosByPageFailTransformerImpl extends GetTodosByPageFailTransformer {
     @Override
-    public ResponseEntity<?> process() {
+    public ResponseEntity<?> process(Object... data) {
+        Exception exception = (Exception) data[0];
+        HttpStatusCode httpStatusCode = (HttpStatusCode) data[1];
+
         Map<String, String> response = new HashMap<>();
         response.put("result", "fail");
-        response.put("message", this.getException().getMessage());
+        response.put("message", exception.getMessage());
 
-        return new ResponseEntity<>(response, this.getHttpStatusCode());
+        return new ResponseEntity<>(response, httpStatusCode);
     }
 }

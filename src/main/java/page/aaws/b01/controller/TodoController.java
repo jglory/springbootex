@@ -41,24 +41,23 @@ public class TodoController {
             BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
-            return (
-                new AddNewTodoFailTransformerImpl(
-                    HttpStatusCode.valueOf(HttpStatus.UNPROCESSABLE_ENTITY.value()),
-                    new Exception(bindingResult.getFieldErrors().get(0).getField() + " - " + bindingResult.getFieldErrors().get(0).getCode())
-                )
-            ).process();
+            return (new AddNewTodoFailTransformerImpl())
+                    .process(
+                            HttpStatusCode.valueOf(HttpStatus.UNPROCESSABLE_ENTITY.value()),
+                            new Exception(bindingResult.getFieldErrors().get(0).getField() + " - " + bindingResult.getFieldErrors().get(0).getCode())
+                    );
         }
 
         todoDto.setId(todoService.addNewTodo(todoDto));
-        return (new AddNewTodoOkTransformerImpl(todoDto)).process();
+        return (new AddNewTodoOkTransformerImpl()).process(todoDto);
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deleteTodo(@PathVariable("id") Long id) {
         try {
             this.todoService.deleteTodo(id);
-        } catch (NoSuchElementException e) {
-            return (new DeleteTodoFailTransformerImpl(HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()), e).process());
+        } catch (NoSuchElementException exception) {
+            return (new DeleteTodoFailTransformerImpl().process(exception, HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value())));
         }
 
         return (new DeleteTodoOkTransformerImpl()).process();
@@ -70,16 +69,16 @@ public class TodoController {
 
         try {
             todoDto = this.todoService.getTodo(id);
-        } catch (NoSuchElementException e) {
-            return (new GetTodoFailTransformerImpl(HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()), e)).process();
+        } catch (NoSuchElementException exception) {
+            return (new GetTodoFailTransformerImpl()).process(exception, HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()));
         }
 
-        return (new GetTodoOkTransformerImpl(todoDto)).process();
+        return (new GetTodoOkTransformerImpl()).process(todoDto);
     }
 
     @GetMapping(value = "/")
     public ResponseEntity<?> getTodosByPage(@Valid PageRequestDto pageRequestDto) {
-        return (new GetTodosByPageOkTransformerImpl(this.todoService.getTodosByPage(pageRequestDto))).process();
+        return (new GetTodosByPageOkTransformerImpl()).process(this.todoService.getTodosByPage(pageRequestDto));
     }
 
     @PutMapping(value = "/{id}")
@@ -89,10 +88,10 @@ public class TodoController {
         todoDto.setId(id);
         try {
             this.todoService.updateTodo(todoDto);
-        } catch (NoSuchElementException e) {
-            return (new UpdateTodoFailTransformerImpl(HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()), e)).process();
+        } catch (NoSuchElementException exception) {
+            return (new UpdateTodoFailTransformerImpl()).process(exception, HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()));
         }
 
-        return (new UpdateTodoOkTransformerImpl(todoDto)).process();
+        return (new UpdateTodoOkTransformerImpl()).process(todoDto);
     }
 }

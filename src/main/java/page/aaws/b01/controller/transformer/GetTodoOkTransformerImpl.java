@@ -4,15 +4,9 @@ import org.springframework.http.ResponseEntity;
 
 import page.aaws.b01.dto.TodoDto;
 
-public class GetTodoOkTransformerImpl extends OkTransformer {
-    private final TodoDto todoDto;
-
-    public GetTodoOkTransformerImpl(TodoDto todoDto) {
-        this.todoDto = todoDto;
-    }
-
+public class GetTodoOkTransformerImpl extends GetTodoOkTransformer {
     @Override
-    public ResponseEntity<?> process() {
-        return (ResponseEntity<?>) ResponseEntity.ok(this.todoDto);
+    public ResponseEntity<?> process(Object... data) {
+        return ResponseEntity.ok((TodoDto) data[0]);
     }
 }
