@@ -95,9 +95,13 @@ public class TodoController {
         try {
             this.todoService.updateTodo(todoDto);
         } catch (NoSuchElementException exception) {
-            return (new UpdateTodoFailTransformerImpl()).process(exception, HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()));
+            return this.applicationContext
+                    .getBean("updateTodoFailTransformer", UpdateTodoFailTransformer.class)
+                    .process(exception, HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()));
         }
 
-        return (new UpdateTodoOkTransformerImpl()).process(todoDto);
+        return this.applicationContext
+                .getBean("updateTodoOkTransformer", UpdateTodoOkTransformer.class)
+                .process(todoDto);
     }
 }

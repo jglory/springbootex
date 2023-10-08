@@ -24,6 +24,10 @@ import page.aaws.b01.controller.transformer.GetTodosByPageFailTransformer;
 import page.aaws.b01.controller.transformer.GetTodosByPageFailTransformerImpl;
 import page.aaws.b01.controller.transformer.GetTodosByPageOkTransformer;
 import page.aaws.b01.controller.transformer.GetTodosByPageOkTransformerImpl;
+import page.aaws.b01.controller.transformer.UpdateTodoFailTransformer;
+import page.aaws.b01.controller.transformer.UpdateTodoFailTransformerImpl;
+import page.aaws.b01.controller.transformer.UpdateTodoOkTransformer;
+import page.aaws.b01.controller.transformer.UpdateTodoOkTransformerImpl;
 
 @Configuration
 public class RootConfig {
@@ -83,5 +87,17 @@ public class RootConfig {
     @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
     public GetTodosByPageFailTransformer getTodosByPageFailTransformer() {
         return new GetTodosByPageFailTransformerImpl();
+    }
+
+    @Bean
+    @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
+    public UpdateTodoOkTransformer updateTodoOkTransformer() {
+        return new UpdateTodoOkTransformerImpl();
+    }
+
+    @Bean
+    @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
+    public UpdateTodoFailTransformer updateTodoFailTransformer() {
+        return new UpdateTodoFailTransformerImpl();
     }
 }
