@@ -2,8 +2,6 @@ package page.aaws.b01.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 
 import page.aaws.b01.controller.transformer.AddNewTodoFailTransformer;
 import page.aaws.b01.controller.transformer.AddNewTodoFailTransformerImpl;
@@ -29,61 +27,51 @@ import page.aaws.b01.controller.transformer.UpdateTodoOkTransformerImpl;
 @Configuration
 public class HttpTransformerConfig {
     @Bean
-    @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
     public AddNewTodoOkTransformer addNewTodoOkTransformer() {
         return new AddNewTodoOkTransformerImpl();
     }
 
     @Bean
-    @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
     public AddNewTodoFailTransformer addNewTodoFailTransformer() {
         return new AddNewTodoFailTransformerImpl();
     }
 
     @Bean
-    @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
     public DeleteTodoOkTransformer deleteTodoOkTransformer() {
         return new DeleteTodoOkTransformerImpl();
     }
 
     @Bean
-    @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
     public DeleteTodoFailTransformer deleteTodoFailTransformer() {
         return new DeleteTodoFailTransformerImpl();
     }
 
     @Bean
-    @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
     public GetTodoOkTransformer getTodoOkTransformer() {
         return new GetTodoOkTransformerImpl();
     }
 
     @Bean
-    @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
     public GetTodoFailTransformer getTodoFailTransformer() {
         return new GetTodoFailTransformerImpl();
     }
 
     @Bean
-    @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
     public GetTodosByPageOkTransformer getTodosByPageOkTransformer() {
         return new GetTodosByPageOkTransformerImpl();
     }
 
     @Bean
-    @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
     public GetTodosByPageFailTransformer getTodosByPageFailTransformer() {
         return new GetTodosByPageFailTransformerImpl();
     }
 
     @Bean
-    @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
     public UpdateTodoOkTransformer updateTodoOkTransformer() {
         return new UpdateTodoOkTransformerImpl();
     }
 
     @Bean
-    @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
     public UpdateTodoFailTransformer updateTodoFailTransformer() {
         return new UpdateTodoFailTransformerImpl();
     }
