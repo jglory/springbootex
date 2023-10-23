@@ -27,8 +27,11 @@ public class TodoServiceImpl implements TodoService {
     private final TodoRepository todoRepository;
 
     @Override
-    public Long addNewTodo(TodoDto dto) {
-        return todoRepository.save(modelMapper.map(dto, TodoEntity.class)).getId();
+    public TodoDto addNewTodo(TodoDto dto) {
+        return this.modelMapper.map(
+                todoRepository.save(this.modelMapper.map(dto, TodoEntity.class)),
+                TodoDto.class
+        );
     }
 
     @Override

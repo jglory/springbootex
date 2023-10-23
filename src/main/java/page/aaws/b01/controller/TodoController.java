@@ -3,7 +3,6 @@ package page.aaws.b01.controller;
 import java.util.NoSuchElementException;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -12,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import page.aaws.b01.controller.cqrs.command.*;
@@ -51,27 +49,24 @@ public class TodoController {
     private final UpdateTodoCommandHandler updateTodoCommandHandler;
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addNewTodo(
-            HttpServletRequest request,
-            @Valid @RequestBody TodoDto todoDto,
-            BindingResult bindingResult
-    ) {
-        if (bindingResult.hasErrors()) {
+    public ResponseEntity<?> addNewTodo(HttpServletRequest request) {
+        TodoDto todoDto;
+
+        try {
+            todoDto = this.addNewTodoCommandHandler.process(
+                    this.commandAndQueryFactory
+                            .create(request, AddNewTodoCommandImpl.class)
+            );
+        } catch (NoSuchElementException exception) {
+            return this.addNewTodoFailTransformer
+                    .process(exception, HttpStatusCode.valueOf(HttpStatus.UNPROCESSABLE_ENTITY.value()));
+        } catch (RuntimeException exception) {
             return this.addNewTodoFailTransformer
                     .process(
-                            HttpStatusCode.valueOf(HttpStatus.UNPROCESSABLE_ENTITY.value()),
-                            new Exception(
-                                    bindingResult.getFieldErrors().get(0).getField()
-                                            + " - "
-                                            + bindingResult.getFieldErrors().get(0).getCode()
-                            )
+                            new Exception("전송된 자료가 형식에 맞지 않습니다."),
+                            HttpStatusCode.valueOf(HttpStatus.UNPROCESSABLE_ENTITY.value())
                     );
         }
-
-        this.addNewTodoCommandHandler.process(
-                this.commandAndQueryFactory
-                        .create(request, AddNewTodoCommandImpl.class)
-        );
 
         return this.addNewTodoOkTransformer.process(todoDto);
     }

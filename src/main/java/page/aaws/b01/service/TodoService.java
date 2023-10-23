@@ -5,7 +5,7 @@ import page.aaws.b01.dto.PageDto;
 import page.aaws.b01.dto.PageRequestDto;
 
 public interface TodoService {
-    Long addNewTodo(TodoDto dto);
+    TodoDto addNewTodo(TodoDto dto);
 
     TodoDto getTodo(Long id);
 

@@ -31,7 +31,7 @@ public class TodoServiceTests {
                 .periodStartedAt(LocalDateTime.now())
                 .periodEndedAt(LocalDateTime.now())
                 .build();
-        todoDto.setId(todoService.addNewTodo(todoDto));
+        todoDto = todoService.addNewTodo(todoDto);
         log.info(todoDto);
     }
 

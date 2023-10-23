@@ -16,7 +16,7 @@ public class AddNewTodoFailTransformerImpl extends AddNewTodoFailTransformer {
 
         Map<String, String> response = new HashMap<>();
         response.put("result", "fail");
-        response.put("message", "입력 정보가 잘못 되었습니다. " + exception.getMessage());
+        response.put("message", exception.getMessage());
 
         return new ResponseEntity<>(response, httpStatusCode);
     }

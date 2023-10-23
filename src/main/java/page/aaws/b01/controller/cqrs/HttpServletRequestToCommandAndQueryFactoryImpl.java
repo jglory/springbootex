@@ -3,6 +3,7 @@ package page.aaws.b01.controller.cqrs;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.tomcat.util.json.JSONParser;
 import org.apache.tomcat.util.json.ParseException;
+import org.apache.tomcat.util.json.TokenMgrError;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.servlet.HandlerMapping;
@@ -19,32 +20,40 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Component
 public class HttpServletRequestToCommandAndQueryFactoryImpl implements CommandAndQueryFactory {
     @Override
-    public <T> T create(Object input, Class<T> requiredType) {
+    public <T> T create(Object input, Class<T> requiredType) throws NoSuchElementException {
         HttpServletRequest request = (HttpServletRequest) input;
 
         if (requiredType.equals(AddNewTodoCommandImpl.class)) {
-            TodoDto todoDto = new TodoDto();
+            TodoDto todoDto;
 
             try {
                 String body = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
                 JSONParser jsonParser = new JSONParser(body);
                 LinkedHashMap<String, Object> json = jsonParser.object();
 
-                todoDto.setId((Long)json.get("id"));
-                todoDto.setSubject((String)json.get("subject"));
-                todoDto.setDescription((String)json.get("description"));
-                todoDto.setPeriodStartedAt(
-                        json.get("periodStartedAt") == null ? null : LocalDateTime.parse((String)json.get("periodStartedAt"), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
-                );
-                todoDto.setPeriodStartedAt(
-                        json.get("setPeriodEndedAt") == null ? null : LocalDateTime.parse((String)json.get("setPeriodEndedAt"), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
-                );
-                todoDto.setDone((Boolean)json.get("done"));
-            } catch (IOException | ParseException e) {
+                if (json.get("subject") == null) {
+                    throw new NoSuchElementException("제목에 해당하는 자료가 없습니다.");
+                } else if (json.get("description") == null) {
+                    throw new NoSuchElementException("내용에 해당하는 자료가 없습니다.");
+                }
+
+                todoDto = TodoDto.builder()
+                        .subject((String)json.get("subject"))
+                        .description((String)json.get("description"))
+                        .periodStartedAt(
+                            json.get("periodStartedAt") == null ? null : LocalDateTime.parse((String)json.get("periodStartedAt"), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+                        )
+                        .periodEndedAt(
+                            json.get("periodEndedAt") == null ? null : LocalDateTime.parse((String)json.get("periodEndedAt"), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+                        )
+                        .done((Boolean)json.get("done"))
+                        .build();
+            } catch (IOException | ParseException | TokenMgrError e) {
                 throw new RuntimeException(e);
             }
 
