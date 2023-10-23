@@ -2,6 +2,7 @@ package page.aaws.b01.controller;
 
 import java.util.NoSuchElementException;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import page.aaws.b01.controller.cqrs.command.*;
+import page.aaws.b01.controller.handler.*;
 import page.aaws.b01.controller.transformer.*;
+import page.aaws.b01.cqrs.CommandAndQueryFactory;
 import page.aaws.b01.dto.PageRequestDto;
 import page.aaws.b01.dto.TodoDto;
 import page.aaws.b01.service.TodoService;
@@ -26,26 +30,38 @@ import page.aaws.b01.service.TodoService;
 @Log4j2
 public class TodoController {
     private final ApplicationContext applicationContext;
+
+    private final CommandAndQueryFactory commandAndQueryFactory;
     private final TodoService todoService;
+
+    private final AddNewTodoOkTransformer addNewTodoOkTransformer;
+    private final AddNewTodoFailTransformer addNewTodoFailTransformer;
+    private final AddNewTodoCommandHandler addNewTodoCommandHandler;
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewTodo(
+            HttpServletRequest request,
             @Valid @RequestBody TodoDto todoDto,
             BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
-            return this.applicationContext
-                    .getBean("addNewTodoFailTransformer", AddNewTodoFailTransformer.class)
+            return this.addNewTodoFailTransformer
                     .process(
                             HttpStatusCode.valueOf(HttpStatus.UNPROCESSABLE_ENTITY.value()),
-                            new Exception(bindingResult.getFieldErrors().get(0).getField() + " - " + bindingResult.getFieldErrors().get(0).getCode())
+                            new Exception(
+                                    bindingResult.getFieldErrors().get(0).getField()
+                                            + " - "
+                                            + bindingResult.getFieldErrors().get(0).getCode()
+                            )
                     );
         }
 
-        todoDto.setId(todoService.addNewTodo(todoDto));
-        return this.applicationContext
-                .getBean("addNewTodoOkTransformer", AddNewTodoOkTransformer.class)
-                .process(todoDto);
+        this.addNewTodoCommandHandler.process(
+                this.commandAndQueryFactory
+                        .create(request, AddNewTodoCommandImpl.class)
+        );
+
+        return this.addNewTodoOkTransformer.process(todoDto);
     }
 
     @DeleteMapping(value = "/{id}")
