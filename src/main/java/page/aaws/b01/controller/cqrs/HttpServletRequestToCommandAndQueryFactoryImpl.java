@@ -5,7 +5,7 @@ import org.apache.tomcat.util.json.JSONParser;
 import org.apache.tomcat.util.json.ParseException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
-import page.aaws.b01.cqrs.CommandAndQuery;
+import org.springframework.web.servlet.HandlerMapping;
 import page.aaws.b01.cqrs.CommandAndQueryFactory;
 import page.aaws.b01.controller.cqrs.command.*;
 import page.aaws.b01.dto.TodoDto;
@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Component
 public class HttpServletRequestToCommandAndQueryFactoryImpl implements CommandAndQueryFactory {
@@ -45,6 +46,9 @@ public class HttpServletRequestToCommandAndQueryFactoryImpl implements CommandAn
             }
 
             return (T) new AddNewTodoCommandImpl(todoDto);
+        } else if (requiredType.equals(DeleteTodoCommandImpl.class)) {
+            Map<String, String> map = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+            return (T) new DeleteTodoCommandImpl(Long.valueOf(map.get("id")));
         }
         return null;
     }

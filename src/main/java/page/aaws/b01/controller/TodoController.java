@@ -38,6 +38,11 @@ public class TodoController {
     private final AddNewTodoFailTransformer addNewTodoFailTransformer;
     private final AddNewTodoCommandHandler addNewTodoCommandHandler;
 
+    private final DeleteTodoOkTransformer deleteTodoOkTransformer;
+    private final DeleteTodoFailTransformer deleteTodoFailTransformer;
+    private final DeleteTodoCommandHandler deleteTodoCommandHandler;
+
+
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewTodo(
             HttpServletRequest request,
@@ -65,18 +70,18 @@ public class TodoController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> deleteTodo(@PathVariable("id") Long id) {
+    public ResponseEntity<?> deleteTodo(HttpServletRequest request) {
         try {
-            this.todoService.deleteTodo(id);
+            this.deleteTodoCommandHandler.process(
+                    this.commandAndQueryFactory
+                            .create(request, DeleteTodoCommandImpl.class)
+            );
         } catch (NoSuchElementException exception) {
-            return this.applicationContext
-                    .getBean("deleteTodoFailTransformer", DeleteTodoFailTransformer.class)
+            return this.deleteTodoFailTransformer
                     .process(exception, HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()));
         }
 
-        return this.applicationContext
-                .getBean("deleteTodoOkTransformer", DeleteTodoOkTransformer.class)
-                .process();
+        return this.deleteTodoOkTransformer.process();
     }
 
     @GetMapping(value = "/{id}")
