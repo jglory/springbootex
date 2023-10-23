@@ -59,8 +59,9 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public void deleteTodo(Long id) throws NoSuchElementException {
+    public Long deleteTodo(Long id) throws NoSuchElementException {
         this.todoRepository.findById(id).orElseThrow();
         todoRepository.deleteById(id);
+        return id;
     }
 }
