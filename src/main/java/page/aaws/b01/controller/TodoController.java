@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import page.aaws.b01.controller.cqrs.command.*;
 import page.aaws.b01.controller.cqrs.query.GetTodoQueryImpl;
+import page.aaws.b01.controller.cqrs.query.GetTodosByPageQueryImpl;
 import page.aaws.b01.controller.handler.*;
 import page.aaws.b01.controller.transformer.*;
 import page.aaws.b01.cqrs.CommandAndQueryFactory;
@@ -46,6 +47,10 @@ public class TodoController {
     private final GetTodoOkTransformer getTodoOkTransformer;
     private final GetTodoFailTransformer getTodoFailTransformer;
     private final GetTodoQueryHandler getTodoQueryHandler;
+
+    private final GetTodosByPageOkTransformer getTodosByPageOkTransformer;
+    private final GetTodosByPageFailTransformer getTodosByPageFailTransformer;
+    private final GetTodosByPageQueryHandler getTodosByPageQueryHandler;
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewTodo(
@@ -106,10 +111,15 @@ public class TodoController {
     }
 
     @GetMapping(value = "/")
-    public ResponseEntity<?> getTodosByPage(@Valid PageRequestDto pageRequestDto) {
-        return this.applicationContext
-                .getBean("getTodosByPageOkTransformer", GetTodosByPageOkTransformer.class)
-                .process(this.todoService.getTodosByPage(pageRequestDto));
+    public ResponseEntity<?> getTodosByPage(HttpServletRequest request) {
+        return this.getTodosByPageOkTransformer
+                .process(
+                        this.getTodosByPageQueryHandler
+                                .process(
+                                        this.commandAndQueryFactory
+                                                .create(request, GetTodosByPageQueryImpl.class)
+                        )
+                );
     }
 
     @PutMapping(value = "/{id}")

@@ -7,8 +7,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.servlet.HandlerMapping;
 import page.aaws.b01.controller.cqrs.query.GetTodoQueryImpl;
+import page.aaws.b01.controller.cqrs.query.GetTodosByPageQueryImpl;
 import page.aaws.b01.cqrs.CommandAndQueryFactory;
 import page.aaws.b01.controller.cqrs.command.*;
+import page.aaws.b01.dto.PageRequestDto;
 import page.aaws.b01.dto.TodoDto;
 
 import java.io.IOException;
@@ -53,6 +55,18 @@ public class HttpServletRequestToCommandAndQueryFactoryImpl implements CommandAn
         } else if (requiredType.equals(GetTodoQueryImpl.class)) {
             Map<String, String> map = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
             return (T) new GetTodoQueryImpl(Long.valueOf(map.get("id")));
+        } else if (requiredType.equals(GetTodosByPageQueryImpl.class)) {
+            return (T) new GetTodosByPageQueryImpl(
+                    PageRequestDto.builder()
+                            .number(request.getParameter("number") == null ? PageRequestDto.DEFAULT_NUMBER : Integer.valueOf(request.getParameter("number")))
+                            .size(request.getParameter("size") == null ? PageRequestDto.DEFAULT_SIZE : Integer.valueOf(request.getParameter("size")))
+                            .types(request.getParameterValues("types"))
+                            .keyword(request.getParameter("keyword"))
+                            .done(request.getParameter("done") == null ? null : Boolean.valueOf(request.getParameter("done")))
+                            .periodStartedAt(request.getParameter("periodStartedAt") == null ? null : LocalDateTime.parse(request.getParameter("periodStartedAt"), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+                            .periodEndedAt(request.getParameter("periodEndedAt") == null ? null : LocalDateTime.parse(request.getParameter("periodEndedAt"), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
+                            .build()
+            );
         }
         return null;
     }

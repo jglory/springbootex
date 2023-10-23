@@ -13,11 +13,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PageRequestDto {
-    @Builder.Default
-    private int number = 1;
+    public static final int DEFAULT_NUMBER = 0;
+    public static final int DEFAULT_SIZE = 10;
 
     @Builder.Default
-    private int size = 10;
+    private int number = DEFAULT_NUMBER;
+
+    @Builder.Default
+    private int size = DEFAULT_SIZE;
 
     @Builder.Default
     private String[] types = {};
