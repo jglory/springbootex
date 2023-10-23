@@ -8,7 +8,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -22,19 +21,14 @@ import page.aaws.b01.controller.cqrs.query.GetTodosByPageQueryImpl;
 import page.aaws.b01.controller.handler.*;
 import page.aaws.b01.controller.transformer.*;
 import page.aaws.b01.cqrs.CommandAndQueryFactory;
-import page.aaws.b01.dto.PageRequestDto;
 import page.aaws.b01.dto.TodoDto;
-import page.aaws.b01.service.TodoService;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/todo")
 @Log4j2
 public class TodoController {
-    private final ApplicationContext applicationContext;
-
     private final CommandAndQueryFactory commandAndQueryFactory;
-    private final TodoService todoService;
 
     private final AddNewTodoOkTransformer addNewTodoOkTransformer;
     private final AddNewTodoFailTransformer addNewTodoFailTransformer;
@@ -51,6 +45,10 @@ public class TodoController {
     private final GetTodosByPageOkTransformer getTodosByPageOkTransformer;
     private final GetTodosByPageFailTransformer getTodosByPageFailTransformer;
     private final GetTodosByPageQueryHandler getTodosByPageQueryHandler;
+
+    private final UpdateTodoOkTransformer updateTodoOkTransformer;
+    private final UpdateTodoFailTransformer updateTodoFailTransformer;
+    private final UpdateTodoCommandHandler updateTodoCommandHandler;
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewTodo(
@@ -123,20 +121,19 @@ public class TodoController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<?> updateTodo(
-            @PathVariable("id") Long id,
-            @Valid @RequestBody TodoDto todoDto) {
-        todoDto.setId(id);
+    public ResponseEntity<?> updateTodo(HttpServletRequest request) {
+        TodoDto todoDto;
+
         try {
-            this.todoService.updateTodo(todoDto);
+            todoDto = this.updateTodoCommandHandler.process(
+                    this.commandAndQueryFactory
+                            .create(request, UpdateTodoCommandImpl.class)
+            );
         } catch (NoSuchElementException exception) {
-            return this.applicationContext
-                    .getBean("updateTodoFailTransformer", UpdateTodoFailTransformer.class)
+            return this.updateTodoFailTransformer
                     .process(exception, HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()));
         }
 
-        return this.applicationContext
-                .getBean("updateTodoOkTransformer", UpdateTodoOkTransformer.class)
-                .process(todoDto);
+        return this.updateTodoOkTransformer.process(todoDto);
     }
 }

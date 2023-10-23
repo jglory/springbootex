@@ -49,13 +49,14 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public void updateTodo(TodoDto dto) {
+    public TodoDto updateTodo(TodoDto dto) {
         TodoEntity todoEntity = todoRepository.findById(dto.getId()).orElseThrow();
         todoEntity.changeSubject(dto.getSubject());
         todoEntity.changeDescription(dto.getDescription());
         todoEntity.changePeriod(dto.getPeriodStartedAt(), dto.getPeriodEndedAt());
         todoEntity.hasDone(true);
         todoRepository.save(todoEntity);
+        return dto;
     }
 
     @Override

@@ -11,7 +11,7 @@ public interface TodoService {
 
     PageDto<TodoDto> getTodosByPage(PageRequestDto pageRequestDto);
 
-    void updateTodo(TodoDto dto);
+    TodoDto updateTodo(TodoDto dto);
 
     Long deleteTodo(Long id);
 }

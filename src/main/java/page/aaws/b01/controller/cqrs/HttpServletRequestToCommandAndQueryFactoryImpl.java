@@ -67,6 +67,32 @@ public class HttpServletRequestToCommandAndQueryFactoryImpl implements CommandAn
                             .periodEndedAt(request.getParameter("periodEndedAt") == null ? null : LocalDateTime.parse(request.getParameter("periodEndedAt"), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
                             .build()
             );
+        } else if (requiredType.equals(UpdateTodoCommandImpl.class)) {
+            TodoDto todoDto;
+
+            Map<String, String> map = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+            TodoDto.TodoDtoBuilder builder = TodoDto.builder().id(Long.valueOf(map.get("id")));
+
+            try {
+                String body = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
+                JSONParser jsonParser = new JSONParser(body);
+                LinkedHashMap<String, Object> json = jsonParser.object();
+
+                todoDto = builder.subject((String)json.get("subject"))
+                        .description((String)json.get("description"))
+                        .periodStartedAt(
+                            json.get("periodStartedAt") == null ? null : LocalDateTime.parse((String)json.get("periodStartedAt"), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+                        )
+                        .periodEndedAt(
+                            json.get("periodEndedAt") == null ? null : LocalDateTime.parse((String)json.get("periodEndedAt"), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+                        )
+                        .done((Boolean)json.get("done"))
+                        .build();
+            } catch (IOException | ParseException e) {
+                throw new RuntimeException(e);
+            }
+
+            return (T) new UpdateTodoCommandImpl(todoDto);
         }
         return null;
     }
