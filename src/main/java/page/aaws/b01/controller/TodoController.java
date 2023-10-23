@@ -17,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import page.aaws.b01.controller.cqrs.command.*;
+import page.aaws.b01.controller.cqrs.query.GetTodoQueryImpl;
 import page.aaws.b01.controller.handler.*;
 import page.aaws.b01.controller.transformer.*;
 import page.aaws.b01.cqrs.CommandAndQueryFactory;
@@ -42,6 +43,9 @@ public class TodoController {
     private final DeleteTodoFailTransformer deleteTodoFailTransformer;
     private final DeleteTodoCommandHandler deleteTodoCommandHandler;
 
+    private final GetTodoOkTransformer getTodoOkTransformer;
+    private final GetTodoFailTransformer getTodoFailTransformer;
+    private final GetTodoQueryHandler getTodoQueryHandler;
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewTodo(
@@ -85,20 +89,20 @@ public class TodoController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<?> getTodo(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getTodo(HttpServletRequest request) {
         TodoDto todoDto;
 
         try {
-            todoDto = this.todoService.getTodo(id);
+            todoDto = this.getTodoQueryHandler.process(
+                    this.commandAndQueryFactory
+                            .create(request, GetTodoQueryImpl.class)
+            );
         } catch (NoSuchElementException exception) {
-            return this.applicationContext
-                    .getBean("getTodoFailTransformer", GetTodoFailTransformer.class)
+            return this.getTodoFailTransformer
                     .process(exception, HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()));
         }
 
-        return this.applicationContext
-                .getBean("getTodoOkTransformer", GetTodoOkTransformer.class)
-                .process(todoDto);
+        return this.getTodoOkTransformer.process(todoDto);
     }
 
     @GetMapping(value = "/")

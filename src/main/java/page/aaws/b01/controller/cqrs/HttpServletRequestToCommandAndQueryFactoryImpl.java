@@ -6,6 +6,7 @@ import org.apache.tomcat.util.json.ParseException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.servlet.HandlerMapping;
+import page.aaws.b01.controller.cqrs.query.GetTodoQueryImpl;
 import page.aaws.b01.cqrs.CommandAndQueryFactory;
 import page.aaws.b01.controller.cqrs.command.*;
 import page.aaws.b01.dto.TodoDto;
@@ -49,6 +50,9 @@ public class HttpServletRequestToCommandAndQueryFactoryImpl implements CommandAn
         } else if (requiredType.equals(DeleteTodoCommandImpl.class)) {
             Map<String, String> map = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
             return (T) new DeleteTodoCommandImpl(Long.valueOf(map.get("id")));
+        } else if (requiredType.equals(GetTodoQueryImpl.class)) {
+            Map<String, String> map = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+            return (T) new GetTodoQueryImpl(Long.valueOf(map.get("id")));
         }
         return null;
     }

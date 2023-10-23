@@ -1,9 +1,11 @@
 package page.aaws.b01.controller.transformer;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 
 import page.aaws.b01.dto.TodoDto;
 
+@Component
 public class GetTodoOkTransformerImpl extends GetTodoOkTransformer {
     @Override
     public ResponseEntity<?> process(Object... data) {
