@@ -27,7 +27,7 @@ public class TodoGetTodosByPageImpl
         QTodoEntity todo = QTodoEntity.todoEntity;
         JPQLQuery<TodoEntity> query = from(todo);
 
-        if (pageRequestDto.getTypes().length > 0 && pageRequestDto.getKeyword().equals("") == false) {
+        if (pageRequestDto.getTypes() != null && pageRequestDto.getTypes().length > 0 && pageRequestDto.getKeyword().equals("") == false) {
             BooleanBuilder booleanBuilder = new BooleanBuilder();
 
             for (String type: pageRequestDto.getTypes()) {
@@ -52,20 +52,21 @@ public class TodoGetTodosByPageImpl
 
         long totalElements = query.fetchCount();
         long totalPages = Long.valueOf(totalElements / pageRequestDto.getSize() + (totalElements % pageRequestDto.getSize() > 0 ? 1 : 0)).intValue();
+
         List<TodoEntity> items;
         if (pageRequestDto.getNumber() < 0 || pageRequestDto.getNumber() >= totalPages) {
-            items = new ArrayList<TodoEntity>();
+            items = new ArrayList<>();
         } else if (totalElements <= pageRequestDto.getSize()) {
             if (pageRequestDto.getNumber() == 0) {
                 items = query.fetch();
             } else {
-                items = new ArrayList<TodoEntity>();
+                items = new ArrayList<>();
             }
         } else {
             this.getQuerydsl().applyPagination(pageable, query);
             items = query.fetch();
         }
 
-        return new PageImpl<TodoEntity>(items, pageable, totalElements);
+        return new PageImpl<>(items, pageable, totalElements);
     }
 }
