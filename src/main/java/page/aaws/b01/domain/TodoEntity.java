@@ -3,12 +3,15 @@ package page.aaws.b01.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
+import java.time.LocalDateTime;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
+import org.hibernate.annotations.GenericGenerator;
+
+import page.aaws.b01.util.SnowflakeIdGenerator;
 
 @Entity(name = "todo")
 @Getter
@@ -18,7 +21,8 @@ import java.time.LocalDateTime;
 @ToString(callSuper = true)
 public class TodoEntity extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GenericGenerator(name = "snowflake", type = SnowflakeIdGenerator.class)
+    @GeneratedValue(generator = "snowflake")
     private Long id;
 
     @Column(length = 500, nullable = false)
