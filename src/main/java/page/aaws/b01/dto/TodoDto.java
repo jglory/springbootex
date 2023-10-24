@@ -1,22 +1,22 @@
 package page.aaws.b01.dto;
 
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDateTime;
 
 import lombok.Data;
 import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TodoDto {
+public class TodoDto implements Cloneable {
     private Long id;
 
     @NotEmpty
@@ -34,4 +34,9 @@ public class TodoDto {
     private LocalDateTime periodEndedAt;
 
     private Boolean done = false;
+
+    @Override
+    public TodoDto clone() throws CloneNotSupportedException {
+        return (TodoDto) super.clone();
+    }
 }
