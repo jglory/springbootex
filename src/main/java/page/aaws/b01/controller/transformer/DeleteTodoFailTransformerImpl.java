@@ -11,11 +11,12 @@ import java.util.Map;
 public class DeleteTodoFailTransformerImpl extends DeleteTodoFailTransformer {
     @Override
     public ResponseEntity<?> process(Object... data) {
+        Exception exception = (Exception) data[0];
         HttpStatusCode httpStatusCode = (HttpStatusCode) data[1];
 
         Map<String, String> response = new HashMap<>();
         response.put("result", "fail");
-        response.put("message", "해당하는 일정 정보를 찾을 수 없습니다.");
+        response.put("message", exception.getMessage());
 
         return new ResponseEntity<>(response, httpStatusCode);
     }

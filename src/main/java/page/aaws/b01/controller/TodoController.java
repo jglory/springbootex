@@ -18,6 +18,7 @@ import page.aaws.b01.controller.cqrs.query.GetTodoQueryImpl;
 import page.aaws.b01.controller.cqrs.query.GetTodosByPageQueryImpl;
 import page.aaws.b01.controller.handler.*;
 import page.aaws.b01.controller.transformer.*;
+import page.aaws.b01.cqrs.CommandAndQueryCreationException;
 import page.aaws.b01.cqrs.CommandAndQueryFactory;
 import page.aaws.b01.dto.TodoDto;
 
@@ -26,6 +27,10 @@ import page.aaws.b01.dto.TodoDto;
 @RequestMapping("/todo")
 @Log4j2
 public class TodoController {
+    private static final String INTERNAL_SERVER_ERROR = "서버 오류가 발생하였습니다.";
+    private static final String NOT_FOUND = "요청에 해당하는 자료를 찾을 수 없습니다.";
+    private static final String UNPROCESSABLE_ENTITY = "요청이 정상적인 형식에 맞지 않습니다.";
+
     private final CommandAndQueryFactory commandAndQueryFactory;
 
     private final AddNewTodoOkTransformer addNewTodoOkTransformer;
@@ -57,15 +62,12 @@ public class TodoController {
                     this.commandAndQueryFactory
                             .create(request, AddNewTodoCommandImpl.class)
             );
-        } catch (NoSuchElementException exception) {
+        } catch (CommandAndQueryCreationException exception) {
             return this.addNewTodoFailTransformer
-                    .process(exception, HttpStatusCode.valueOf(HttpStatus.UNPROCESSABLE_ENTITY.value()));
+                    .process(new Exception(INTERNAL_SERVER_ERROR), HttpStatusCode.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()));
         } catch (RuntimeException exception) {
             return this.addNewTodoFailTransformer
-                    .process(
-                            new Exception("전송된 자료가 형식에 맞지 않습니다."),
-                            HttpStatusCode.valueOf(HttpStatus.UNPROCESSABLE_ENTITY.value())
-                    );
+                    .process(new Exception(UNPROCESSABLE_ENTITY), HttpStatusCode.valueOf(HttpStatus.UNPROCESSABLE_ENTITY.value()));
         }
 
         return this.addNewTodoOkTransformer.process(todoDto);
@@ -78,9 +80,12 @@ public class TodoController {
                     this.commandAndQueryFactory
                             .create(request, DeleteTodoCommandImpl.class)
             );
+        } catch (CommandAndQueryCreationException exception) {
+            return this.deleteTodoFailTransformer
+                    .process(new Exception(INTERNAL_SERVER_ERROR), HttpStatusCode.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()));
         } catch (NoSuchElementException exception) {
             return this.deleteTodoFailTransformer
-                    .process(exception, HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()));
+                    .process(new Exception(NOT_FOUND), HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()));
         }
 
         return this.deleteTodoOkTransformer.process();
@@ -95,9 +100,12 @@ public class TodoController {
                     this.commandAndQueryFactory
                             .create(request, GetTodoQueryImpl.class)
             );
+        } catch (CommandAndQueryCreationException exception) {
+            return this.getTodoFailTransformer
+                    .process(new Exception(INTERNAL_SERVER_ERROR), HttpStatusCode.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()));
         } catch (NoSuchElementException exception) {
             return this.getTodoFailTransformer
-                    .process(exception, HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()));
+                    .process(new Exception(NOT_FOUND), HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()));
         }
 
         return this.getTodoOkTransformer.process(todoDto);
@@ -105,14 +113,18 @@ public class TodoController {
 
     @GetMapping(value = "/")
     public ResponseEntity<?> getTodosByPage(HttpServletRequest request) {
-        return this.getTodosByPageOkTransformer
-                .process(
-                        this.getTodosByPageQueryHandler
-                                .process(
-                                        this.commandAndQueryFactory
-                                                .create(request, GetTodosByPageQueryImpl.class)
-                        )
-                );
+        try {
+            return this.getTodosByPageOkTransformer
+                    .process(
+                            this.getTodosByPageQueryHandler
+                                    .process(
+                                            this.commandAndQueryFactory
+                                                    .create(request, GetTodosByPageQueryImpl.class)
+                                    )
+                    );
+        } catch (CommandAndQueryCreationException exception) {
+            return this.getTodosByPageFailTransformer.process(new Exception(INTERNAL_SERVER_ERROR), HttpStatusCode.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+        }
     }
 
     @PutMapping(value = "/{id}")
@@ -124,9 +136,12 @@ public class TodoController {
                     this.commandAndQueryFactory
                             .create(request, UpdateTodoCommandImpl.class)
             );
+        } catch (CommandAndQueryCreationException exception) {
+            return this.updateTodoFailTransformer
+                    .process(new Exception(INTERNAL_SERVER_ERROR), HttpStatusCode.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()));
         } catch (NoSuchElementException exception) {
             return this.updateTodoFailTransformer
-                    .process(exception, HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()));
+                    .process(new Exception(NOT_FOUND), HttpStatusCode.valueOf(HttpStatus.NOT_FOUND.value()));
         }
 
         return this.updateTodoOkTransformer.process(todoDto);

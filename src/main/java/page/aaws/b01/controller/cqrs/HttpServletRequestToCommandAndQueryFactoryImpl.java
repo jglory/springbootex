@@ -21,6 +21,7 @@ import org.springframework.web.servlet.HandlerMapping;
 import page.aaws.b01.controller.cqrs.query.GetTodoQueryImpl;
 import page.aaws.b01.controller.cqrs.query.GetTodosByPageQueryImpl;
 import page.aaws.b01.cqrs.CommandAndQuery;
+import page.aaws.b01.cqrs.CommandAndQueryCreationException;
 import page.aaws.b01.cqrs.CommandAndQueryFactory;
 import page.aaws.b01.controller.cqrs.command.*;
 import page.aaws.b01.dto.PageRequestDto;
@@ -28,13 +29,13 @@ import page.aaws.b01.dto.TodoDto;
 
 @Component
 public class HttpServletRequestToCommandAndQueryFactoryImpl implements CommandAndQueryFactory {
-    private final HashMap<Class<? extends CommandAndQuery>, Function<HttpServletRequest, ? extends CommandAndQuery>> map;
+    private final HashMap<Class<? extends CommandAndQuery>, Function<HttpServletRequest, ? extends CommandAndQuery>> lamdaMap;
 
     public HttpServletRequestToCommandAndQueryFactoryImpl() {
-        this.map = new HashMap<>();
+        this.lamdaMap = new HashMap<>();
 
         // AddNewTodoCommandImpl.class
-        this.map.put(
+        this.lamdaMap.put(
                 AddNewTodoCommandImpl.class,
                 (HttpServletRequest request) -> {
                     TodoDto todoDto;
@@ -69,7 +70,7 @@ public class HttpServletRequestToCommandAndQueryFactoryImpl implements CommandAn
                 });
 
         // DeleteTodoCommandImpl.class
-        this.map.put(
+        this.lamdaMap.put(
                 DeleteTodoCommandImpl.class,
                 (HttpServletRequest request) -> {
                     Map<String, String> map = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
@@ -78,7 +79,7 @@ public class HttpServletRequestToCommandAndQueryFactoryImpl implements CommandAn
         );
 
         // GetTodoQueryImpl.class,
-        this.map.put(
+        this.lamdaMap.put(
                 GetTodoQueryImpl.class,
                 (HttpServletRequest request) -> {
                     Map<String, String> map = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
@@ -87,7 +88,7 @@ public class HttpServletRequestToCommandAndQueryFactoryImpl implements CommandAn
         );
 
         // GetTodosByPageQueryImpl.class,
-        this.map.put(
+        this.lamdaMap.put(
                 GetTodosByPageQueryImpl.class,
                 (HttpServletRequest request) -> {
                     return new GetTodosByPageQueryImpl(
@@ -105,7 +106,7 @@ public class HttpServletRequestToCommandAndQueryFactoryImpl implements CommandAn
         );
 
         // UpdateTodoCommandImpl.class,
-        this.map.put(
+        this.lamdaMap.put(
                 UpdateTodoCommandImpl.class,
                 (HttpServletRequest request) -> {
                     TodoDto todoDto;
@@ -138,7 +139,11 @@ public class HttpServletRequestToCommandAndQueryFactoryImpl implements CommandAn
     }
 
     @Override
-    public <T> T create(Object input, Class<T> requiredType) throws NoSuchElementException {
-        return (T) this.map.get(requiredType).apply((HttpServletRequest) input);
+    public <T> T create(Object input, Class<T> requiredType) throws CommandAndQueryCreationException {
+        Function<HttpServletRequest, ? extends CommandAndQuery> lamda = this.lamdaMap.get(requiredType);
+        if (lamda == null) {
+            throw new CommandAndQueryCreationException(requiredType.toString() + " 해당하는 처리기를 찾을 수 없습니다.");
+        }
+        return (T) this.lamdaMap.get(requiredType).apply((HttpServletRequest) input);
     }
 }
