@@ -1,5 +1,6 @@
 package page.aaws.b01.controller.transformer;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@Lazy
 public class UpdateTodoFailTransformerImpl extends UpdateTodoFailTransformer {
     @Override
     public ResponseEntity<?> process(Object... data) {
