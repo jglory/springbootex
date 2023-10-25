@@ -31,6 +31,7 @@ import static org.mockito.BDDMockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -215,6 +216,38 @@ public class TodoControllerTest {
                 .andExpect(jsonPath("$.size").exists())
                 .andExpect(jsonPath("$.totalElements").exists())
                 .andExpect(jsonPath("$.items").exists())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("TODO 수정")
+    void updateTodoTest() throws Exception {
+        TodoDto todoDto = TodoDto.builder()
+                .id(this.snowflakeIdGenerator.nextId())
+                .subject("subject")
+                .description("description")
+                .done(false)
+                .periodStartedAt(LocalDateTime.now())
+                .periodEndedAt(LocalDateTime.now().plusDays(7))
+                .build();
+
+        given(this.updateTodoCommandHandler.process(any())).willReturn(todoDto);
+
+        ResultActions resultActions = this.mockMvc.perform(
+                put("/todo/" + todoDto.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(todoDto))
+        );
+
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.subject").exists())
+                .andExpect(jsonPath("$.description").exists())
+                .andExpect(jsonPath("$.done").exists())
+                .andExpect(jsonPath("$.periodStartedAt").exists())
+                .andExpect(jsonPath("$.periodEndedAt").exists())
+                .andExpect(jsonPath("$.periodEndedAt").exists())
                 .andDo(print());
     }
 }
