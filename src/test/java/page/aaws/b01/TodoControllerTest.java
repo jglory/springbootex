@@ -3,6 +3,8 @@ package page.aaws.b01;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +21,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import page.aaws.b01.controller.TodoController;
 import page.aaws.b01.controller.handler.*;
+import page.aaws.b01.dto.PageDto;
 import page.aaws.b01.dto.TodoDto;
 import page.aaws.b01.util.SnowflakeIdGenerator;
 
@@ -174,6 +177,44 @@ public class TodoControllerTest {
 
         resultActions
                 .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("TODO 목록 열람")
+    void getTodosByPageTest() throws Exception {
+        TodoDto todoDto = TodoDto.builder()
+                .id(this.snowflakeIdGenerator.nextId())
+                .subject("subject")
+                .description("description")
+                .done(false)
+                .periodStartedAt(LocalDateTime.now())
+                .periodEndedAt(LocalDateTime.now().plusDays(7))
+                .build();
+
+        List<TodoDto> items = new ArrayList<>();
+        items.add(todoDto);
+
+        PageDto<TodoDto> pageDto = PageDto.<TodoDto>builder()
+                .number(0)
+                .size(10)
+                .totalElements(1L)
+                .items(items)
+                .build();
+
+        given(this.getTodosByPageQueryHandler.process(any())).willReturn(pageDto);
+
+        ResultActions resultActions = this.mockMvc.perform(
+                get("/todo/")
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.number").exists())
+                .andExpect(jsonPath("$.size").exists())
+                .andExpect(jsonPath("$.totalElements").exists())
+                .andExpect(jsonPath("$.items").exists())
                 .andDo(print());
     }
 }
