@@ -3,6 +3,7 @@ package page.aaws.b01;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,8 @@ import page.aaws.b01.util.SnowflakeIdGenerator;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -57,7 +60,7 @@ public class TodoControllerTest {
     SnowflakeIdGenerator snowflakeIdGenerator;
 
     @Test
-    @DisplayName("새로운 TODO 가 잘 등록 되는지 테스트")
+    @DisplayName("새로운 TODO 등록")
     void addNewTodoTest() throws Exception {
         TodoDto todoDto = TodoDto.builder()
                 .subject("subject")
@@ -90,6 +93,38 @@ public class TodoControllerTest {
                 .andExpect(jsonPath("$.periodStartedAt").exists())
                 .andExpect(jsonPath("$.periodEndedAt").exists())
                 .andExpect(jsonPath("$.periodEndedAt").exists())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("TODO 삭제(200 OK)")
+    void deleteTodoTest1() throws Exception {
+        Long id = this.snowflakeIdGenerator.nextId();
+
+        given(this.deleteTodoCommandHandler.process(any())).willReturn(id);
+
+        ResultActions resultActions = this.mockMvc.perform(
+                delete("/todo/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("TODO 삭제(404 NOT FOUND)")
+    void deleteTodoTest2() throws Exception {
+        long id = this.snowflakeIdGenerator.nextId();
+
+        when(this.deleteTodoCommandHandler.process(any())).thenThrow(new NoSuchElementException(TodoController.NOT_FOUND));
+
+        ResultActions resultActions = this.mockMvc.perform(
+                delete("/todo/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        resultActions
+                .andExpect(status().isNotFound())
                 .andDo(print());
     }
 }

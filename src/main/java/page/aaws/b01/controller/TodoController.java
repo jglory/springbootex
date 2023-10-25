@@ -27,9 +27,9 @@ import page.aaws.b01.dto.TodoDto;
 @RequestMapping("/todo")
 @Log4j2
 public class TodoController {
-    private static final String INTERNAL_SERVER_ERROR = "서버 오류가 발생하였습니다.";
-    private static final String NOT_FOUND = "요청에 해당하는 자료를 찾을 수 없습니다.";
-    private static final String UNPROCESSABLE_ENTITY = "요청이 정상적인 형식에 맞지 않습니다.";
+    public static final String INTERNAL_SERVER_ERROR = "서버 오류가 발생하였습니다.";
+    public static final String NOT_FOUND = "요청에 해당하는 자료를 찾을 수 없습니다.";
+    public static final String UNPROCESSABLE_ENTITY = "요청이 정상적인 형식에 맞지 않습니다.";
 
     private final CommandAndQueryFactory commandAndQueryFactory;
 
