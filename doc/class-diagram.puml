@@ -1,0 +1,70 @@
+@startuml
+
+' !theme plain
+' top to bottom direction
+skinparam linetype ortho
+
+interface AddNewTodoCommand << interface >>
+interface AddNewTodoCommandHandler << interface >>
+class AddNewTodoCommandHandlerImpl
+class AddNewTodoCommandImpl
+abstract class AddNewTodoFailTransformer
+class AddNewTodoFailTransformerImpl
+abstract class AddNewTodoOkTransformer
+class AddNewTodoOkTransformerImpl
+interface Command << interface >>
+interface CommandAndQuery << interface >>
+interface CommandAndQueryFactory << interface >>
+interface CommandAndQueryHandler<CQ, T> << interface >>
+abstract class FailTransformer
+interface GetTodoQuery << interface >>
+class GetTodoQueryImpl
+class HttpServletRequestToCommandAndQueryFactoryImpl
+annotation Log4j2 << annotation >>
+abstract class OkTransformer
+interface Query << interface >>
+annotation RequestMapping << annotation >>
+annotation RestController << annotation >>
+class TodoController << controller >> {
+    + TodoController(CommandAndQueryFactory, AddNewTodoOkTransformer, AddNewTodoFailTransformer, AddNewTodoCommandHandler ...)
+}
+interface Transformer << interface >>
+interface TodoService << interface >>
+class TodoServiceImpl << service >>
+interface TodoRepository << interface >>
+
+AddNewTodoCommand                               -[#008200,plain]-^  Command
+CommandAndQueryHandler                          --[#008200,plain]-^ AddNewTodoCommandHandler
+AddNewTodoCommandHandler                        -[#008200,plain]-o  TodoController #text:red : injection >
+AddNewTodoCommandHandler                        -[#008200,dashed]-^ AddNewTodoCommandHandlerImpl
+TodoController                                  -[#999900,dotted]- AddNewTodoCommandHandlerImpl
+AddNewTodoCommandImpl                           -[#008200,dashed]-^  AddNewTodoCommand
+
+FailTransformer                                 ^-[#000082,plain]-- AddNewTodoFailTransformer
+TodoController                                  o-[#000082,plain]--- AddNewTodoFailTransformer #text:red : < injection
+AddNewTodoFailTransformer                       ^-[#000082,dashed]- AddNewTodoFailTransformerImpl
+
+OkTransformer                                   ^-[#000082,plain]-- AddNewTodoOkTransformer
+TodoController                                  o-[#000082,plain]--- AddNewTodoOkTransformer #text:red : < injection
+AddNewTodoOkTransformer                         ^-[#000082,dashed]- AddNewTodoOkTransformerImpl
+
+Command                                         -[#008200,plain]-^  CommandAndQuery                                
+CommandAndQueryHandler                          -[#595959,dashed]->  CommandAndQuery
+FailTransformer                                 -[#008200,plain]-^  Transformer
+OkTransformer                                   -[#008200,plain]-^  Transformer
+GetTodoQuery                                    -[#008200,plain]-^  Query
+GetTodoQueryImpl                                -[#008200,dashed]-^  GetTodoQuery                                   
+HttpServletRequestToCommandAndQueryFactoryImpl  -[#008200,dashed]-^  CommandAndQueryFactory
+TodoController                                  o-[#008200,plain]-  CommandAndQueryFactory #text:red : < injection
+Query                                           -[#008200,plain]-^  CommandAndQuery
+Log4j2                                          -[#999900,dotted]- TodoController
+RequestMapping                                   -[#999900,dotted]- TodoController
+RestController                                  -[#999900,dotted]- TodoController
+AddNewTodoCommandHandler                        -[#008200,dotted]- TodoServiceImpl
+AddNewTodoCommandHandler                        o-[#008200,plain]- TodoService #text:red : < injection
+TodoService                                     -[#008200,dashed]-^ TodoServiceImpl
+TodoServiceImpl                                 o-[#008200,plain]- TodoRepository #text:red : < injection
+
+AddNewTodoCommandImpl                           -[#595959,dashed]--> TodoController
+GetTodoQueryImpl                                -[#595959,dashed]--> TodoController
+@enduml

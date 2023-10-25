@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>page.aaws.b01.controller.TodoController</OriginalElement>
+  <nodes>
+    <node x="248.59523518880212" y="190.0866292317709">page.aaws.b01.controller.handler.CommandAndQueryHandler</node>
+    <node x="281.0952351888021" y="-141.51690673828125">page.aaws.b01.cqrs.CommandAndQueryFactory</node>
+    <node x="1030.0" y="36.0">lombok.extern.log4j.Log4j2</node>
+    <node x="1068.1817423502605" y="262.0">page.aaws.b01.controller.transformer.AddNewTodoOkTransformer</node>
+    <node x="268.0952351888021" y="268.08662923177087">page.aaws.b01.controller.handler.AddNewTodoCommandHandler</node>
+    <node x="1052.6817423502605" y="338.0866292317709">page.aaws.b01.controller.transformer.AddNewTodoOkTransformerImpl</node>
+    <node x="-25.0" y="184.0">page.aaws.b01.controller.cqrs.query.GetTodoQueryImpl</node>
+    <node x="906.25" y="114.0">page.aaws.b01.controller.TodoController</node>
+    <node x="1151.0" y="36.0">org.springframework.web.bind.annotation.RestController</node>
+    <node x="-306.5" y="114.0">page.aaws.b01.cqrs.Command</node>
+    <node x="-9.5" y="114.0">page.aaws.b01.controller.cqrs.query.GetTodoQuery</node>
+    <node x="1116.6817423502605" y="185.91337076822907">page.aaws.b01.controller.transformer.OkTransformer</node>
+    <node x="1521.709004720052" y="338.0866292317709">page.aaws.b01.controller.transformer.AddNewTodoFailTransformerImpl</node>
+    <node x="772.0" y="36.0">lombok.RequiredArgsConstructor</node>
+    <node x="-142.5" y="114.0">page.aaws.b01.cqrs.Query</node>
+    <node x="1537.209004720052" y="262.0">page.aaws.b01.controller.transformer.AddNewTodoFailTransformer</node>
+    <node x="184.59523518880212" y="-60.40297444661461">page.aaws.b01.controller.cqrs.HttpServletRequestToCommandAndQueryFactoryImpl</node>
+    <node x="-563.5" y="114.0">page.aaws.b01.controller.cqrs.command.AddNewTodoCommand</node>
+    <node x="252.59523518880212" y="338.08662923177087">page.aaws.b01.controller.handler.AddNewTodoCommandHandlerImpl</node>
+    <node x="1361.1953735351562" y="185.91337076822907">page.aaws.b01.controller.transformer.Transformer</node>
+    <node x="-579.0" y="184.0">page.aaws.b01.controller.cqrs.command.AddNewTodoCommandImpl</node>
+    <node x="1585.709004720052" y="185.91337076822907">page.aaws.b01.controller.transformer.FailTransformer</node>
+    <node x="-263.0" y="36.0">page.aaws.b01.cqrs.CommandAndQuery</node>
+    <node x="577.0" y="36.0">org.springframework.web.bind.annotation.RequestMapping</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="page.aaws.b01.cqrs.Query" target="page.aaws.b01.cqrs.CommandAndQuery" relationship="INTERFACE_GENERALIZATION">
+      <point x="47.5" y="-12.5" />
+      <point x="-96.0" y="115.5" />
+      <point x="67.0" y="6.0" />
+    </edge>
+    <edge source="page.aaws.b01.controller.handler.CommandAndQueryHandler" target="page.aaws.b01.cqrs.CommandAndQuery" relationship="DEPENDENCY">
+      <point x="-32.5" y="-14.0" />
+      <point x="376.0952351888021" y="145.6044921875" />
+      <point x="408.5952351888021" y="145.6044921875" />
+      <point x="408.5952351888021" y="50.0" />
+      <point x="100.0" y="-0.0" />
+    </edge>
+    <edge source="page.aaws.b01.controller.TodoController" target="lombok.RequiredArgsConstructor" relationship="REALIZATION">
+      <point x="0.0" y="-14.0" />
+      <point x="985.75" y="89.0" />
+      <point x="891.0" y="89.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="page.aaws.b01.controller.transformer.AddNewTodoFailTransformer" target="page.aaws.b01.controller.transformer.FailTransformer" relationship="GENERALIZATION">
+      <point x="0.0" y="-14.0" />
+      <point x="1667.209004720052" y="199.91337076822907" />
+      <point x="81.5" y="0.0" />
+    </edge>
+    <edge source="page.aaws.b01.controller.transformer.FailTransformer" target="page.aaws.b01.controller.transformer.Transformer" relationship="REALIZATION">
+      <point x="-81.5" y="0.0" />
+      <point x="1430.6953735351562" y="199.91337076822907" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="page.aaws.b01.cqrs.Command" target="page.aaws.b01.cqrs.CommandAndQuery" relationship="INTERFACE_GENERALIZATION">
+      <point x="-0.0" y="-14.0" />
+      <point x="-80.5" y="14.0" />
+    </edge>
+    <edge source="page.aaws.b01.controller.cqrs.query.GetTodoQueryImpl" target="page.aaws.b01.controller.cqrs.query.GetTodoQuery" relationship="REALIZATION">
+      <point x="-0.0" y="14.0" />
+      <point x="-0.0" y="-14.0" />
+    </edge>
+    <edge source="page.aaws.b01.controller.TodoController" target="org.springframework.web.bind.annotation.RequestMapping" relationship="REALIZATION">
+      <point x="0.0" y="-14.0" />
+      <point x="985.75" y="89.0" />
+      <point x="664.5" y="89.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="page.aaws.b01.controller.TodoController" target="lombok.extern.log4j.Log4j2" relationship="REALIZATION">
+      <point x="0.0" y="-14.0" />
+      <point x="985.75" y="89.0" />
+      <point x="1080.5" y="89.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="page.aaws.b01.controller.cqrs.HttpServletRequestToCommandAndQueryFactoryImpl" target="page.aaws.b01.cqrs.CommandAndQueryFactory" relationship="REALIZATION">
+      <point x="-0.0" y="-14.0" />
+      <point x="408.5952351888021" y="-127.51690673828125" />
+      <point x="-127.5" y="-0.0" />
+    </edge>
+    <edge source="page.aaws.b01.controller.TodoController" target="org.springframework.web.bind.annotation.RestController" relationship="REALIZATION">
+      <point x="0.0" y="-14.0" />
+      <point x="985.75" y="89.0" />
+      <point x="1229.0" y="89.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="page.aaws.b01.controller.cqrs.command.AddNewTodoCommandImpl" target="page.aaws.b01.controller.cqrs.command.AddNewTodoCommand" relationship="REALIZATION">
+      <point x="-0.0" y="14.0" />
+      <point x="-452.0" y="94.0" />
+      <point x="-0.0" y="-14.0" />
+    </edge>
+    <edge source="page.aaws.b01.controller.cqrs.command.AddNewTodoCommand" target="page.aaws.b01.cqrs.Command" relationship="INTERFACE_GENERALIZATION">
+      <point x="111.5" y="-0.0" />
+      <point x="-63.0" y="-0.0" />
+    </edge>
+    <edge source="page.aaws.b01.controller.handler.AddNewTodoCommandHandlerImpl" target="page.aaws.b01.controller.handler.AddNewTodoCommandHandler" relationship="REALIZATION">
+      <point x="-0.0" y="14.0" />
+      <point x="408.5952351888021" y="329.83398946126306" />
+      <point x="408.648640950521" y="329.83398946126306" />
+      <point x="0.05340576171886369" y="11.494720458984432" />
+    </edge>
+    <edge source="page.aaws.b01.controller.handler.AddNewTodoCommandHandlerImpl" target="lombok.RequiredArgsConstructor" relationship="REALIZATION">
+      <point x="-156.0" y="-0.0" />
+      <point x="986.9061584472659" y="352.08662923177087" />
+      <point x="95.90615844726585" y="78.40911865234378" />
+    </edge>
+    <edge source="page.aaws.b01.controller.handler.AddNewTodoCommandHandler" target="page.aaws.b01.controller.handler.CommandAndQueryHandler" relationship="INTERFACE_GENERALIZATION">
+      <point x="-140.5" y="-0.0" />
+      <point x="408.5952351888021" y="282.08662923177087" />
+      <point x="-0.0" y="14.0" />
+    </edge>
+    <edge source="page.aaws.b01.controller.transformer.AddNewTodoFailTransformerImpl" target="page.aaws.b01.controller.transformer.AddNewTodoFailTransformer" relationship="GENERALIZATION">
+      <point x="-15.000373535156314" y="14.0" />
+      <point x="-15.000373535156314" y="-14.0" />
+    </edge>
+    <edge source="page.aaws.b01.controller.transformer.AddNewTodoOkTransformerImpl" target="page.aaws.b01.controller.transformer.AddNewTodoOkTransformer" relationship="GENERALIZATION">
+      <point x="-0.0" y="14.0" />
+      <point x="-0.0" y="-14.0" />
+    </edge>
+    <edge source="page.aaws.b01.controller.transformer.AddNewTodoOkTransformer" target="page.aaws.b01.controller.transformer.OkTransformer" relationship="GENERALIZATION">
+      <point x="-30.0" y="-14.0" />
+      <point x="1166.1817423502605" y="276.1355895996094" />
+      <point x="1196.1817423502605" y="276.1355895996094" />
+      <point x="1196.1817423502605" y="212.15631103515616" />
+      <point x="1116.6817423502605" y="212.15631103515616" />
+      <point x="-79.5" y="0.0" />
+    </edge>
+    <edge source="page.aaws.b01.controller.transformer.OkTransformer" target="page.aaws.b01.controller.transformer.Transformer" relationship="REALIZATION">
+      <point x="55.847686767578125" y="14.0" />
+      <point x="1252.0294291178386" y="199.91337076822907" />
+      <point x="1430.6953735351562" y="199.91337076822907" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="page.aaws.b01.controller.cqrs.query.GetTodoQuery" target="page.aaws.b01.cqrs.Query" relationship="INTERFACE_GENERALIZATION">
+      <point x="-77.0" y="1.0" />
+      <point x="1.75" y="129.0" />
+      <point x="1.75" y="128.0" />
+      <point x="-47.5" y="0.0" />
+    </edge>
+  </edges>
+  <settings layout="계층" zoom="1.0452757161389108" showDependencies="false" x="451.01875813802076" y="188.65533447265625" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
