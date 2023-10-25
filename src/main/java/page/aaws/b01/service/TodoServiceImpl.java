@@ -35,6 +35,13 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
+    public Long deleteTodo(Long id) throws NoSuchElementException {
+        this.todoRepository.findById(id).orElseThrow();
+        todoRepository.deleteById(id);
+        return id;
+    }
+
+    @Override
     public TodoDto getTodo(Long id) {
         return this.modelMapper.map(todoRepository.findById(id).orElseThrow(), TodoDto.class);
     }
@@ -60,12 +67,5 @@ public class TodoServiceImpl implements TodoService {
         todoEntity.hasDone(true);
         todoRepository.save(todoEntity);
         return dto;
-    }
-
-    @Override
-    public Long deleteTodo(Long id) throws NoSuchElementException {
-        this.todoRepository.findById(id).orElseThrow();
-        todoRepository.deleteById(id);
-        return id;
     }
 }
