@@ -1,0 +1,55 @@
+@startuml
+
+' 참여자들
+actor "User" as User
+box "presentation\n" #LightBlue
+    participant "TodoController" as TodoController
+    participant "AddNewTodoOkTransformer" as AddNewTodoOkTransformer
+    participant "AddNewTodoFailTransformer" as AddNewTodoFailTransformer
+end box
+box "application" #White
+    participant "HttpServletRequestToCommandAndQueryFactory" as HttpServletRequestToCommandAndQueryFactory
+    participant "AddNewTodoCommandHandler" as AddNewTodoCommandHandler
+end box
+box "service" #LightBlue
+    participant "TodoServiceImpl" as TodoServiceImpl
+end box
+' #CC5077
+box "persistence" #White
+    participant "TodoRepository" as TodoRepository
+end box
+
+
+
+==Adding a new todo item==
+User -> TodoController: User requests adding a new todo item
+TodoController -> HttpServletRequestToCommandAndQueryFactory: create(request, AddNewTodoCommandImpl.class)
+alt #Gold Fail
+
+    TodoController <- HttpServletRequestToCommandAndQueryFactory : exception
+    TodoController -> AddNewTodoFailTransformer : process(exception, INTERNAL_SERVER_ERROR)
+    TodoController <- AddNewTodoFailTransformer : fail message
+    User <- TodoController : 500 INTERNAL SERVER ERROR - fail message
+end
+' RuntimeException
+TodoController <- HttpServletRequestToCommandAndQueryFactory: command
+
+TodoController -> AddNewTodoCommandHandler : process(addNewTodoCommand)
+alt #Gold Fail
+    TodoController <- AddNewTodoCommandHandler : exception
+    TodoController -> AddNewTodoFailTransformer : process(exception, UNPROCESSABLE_ENTITY)
+    TodoController <- AddNewTodoFailTransformer : fail message
+    User <- TodoController : 422 UNPROCESSABLE ENTITY - fail message
+end
+
+AddNewTodoCommandHandler -> TodoServiceImpl : addNewTodo(...)
+TodoServiceImpl -> TodoRepository : save(...)
+TodoServiceImpl <- TodoRepository : result
+AddNewTodoCommandHandler <- TodoServiceImpl : result
+TodoController <- AddNewTodoCommandHandler : result
+TodoController -> AddNewTodoOkTransformer : process(result, OK)
+TodoController <- AddNewTodoOkTransformer : ok message
+User <- TodoController : 200 OK - ok message
+
+
+@enduml
